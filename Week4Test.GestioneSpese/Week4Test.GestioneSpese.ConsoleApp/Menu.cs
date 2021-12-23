@@ -5,11 +5,10 @@
         internal static void Start()
         {
             bool quit = false;
-            Console.WriteLine("----------- Gestione Spese Dipendenti -----------");
 
             do
             {
-                Console.WriteLine("----------- MENU -----------");
+                Console.WriteLine("----------- Gestione Spese Dipendenti -----------");
                 Console.WriteLine("[1] Inserire nuova spesa");
                 Console.WriteLine("[2] Approva una spesa esistente");
                 Console.WriteLine("[3] Cancella una spesa esistente");
@@ -61,7 +60,7 @@
                 Console.WriteLine($"Categoria: {item.Key} - Totale: {item.Value} euro");
             }
 
-                }
+        }
 
         private static void PrintUsersExpenses()
         {
@@ -118,7 +117,10 @@
             } while (expenseToDelete == null);
 
             bool isDeleted = RepositoryADODisconnected.DeleteExpense(expenseToDelete.Id);
-            //TODO aggiungi messaggio conferma
+            if (isDeleted)
+                Console.WriteLine("Spesa correttamente eliminata");
+            else
+                Console.WriteLine("Errore durante la cancellazione!");
         }
 
         private static void ApproveExpense()
@@ -140,7 +142,10 @@
             } while (expenseToApprove == null);
 
             bool isApproved = RepositoryADODisconnected.UpdateExpense(expenseToApprove.Id);
-            //TODO aggiungi messaggio conferma
+            if (isApproved)
+                Console.WriteLine("Spesa correttamente approvata");
+            else
+                Console.WriteLine("Errore durante il processo!");
         }
 
 
@@ -170,7 +175,10 @@
             newExpense.Approvato = false;
 
             bool isAdded = RepositoryADODisconnected.AddExpense(newExpense);
-
+            if (isAdded)
+                Console.WriteLine("Spesa correttamente aggiunta");
+            else
+                Console.WriteLine("Errore durante l'aggiunta!");
 
         }
 
