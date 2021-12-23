@@ -26,3 +26,7 @@ create table Spesa (
 	insert into Spesa values ('2021-12-16', 2, 'Pernottamento Hotel Roma 3 stelle, 2 notti', 'Dipendente349', 160.00, 1)
 	insert into Spesa values ('2021-12-17', 3, 'Corsa Taxi', 'Dipendente349', 15.22, 1)
 	insert into Spesa values ('2021-12-09', 1, 'Pacchetto Spa Treatment', 'Dipendente3490', 139.99, 0)
+
+	select s.CategoriaId, sum(s.Importo)
+	from Spesa s
+	group by s.CategoriaId

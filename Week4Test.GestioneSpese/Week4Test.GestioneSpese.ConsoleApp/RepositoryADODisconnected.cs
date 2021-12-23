@@ -52,6 +52,49 @@ namespace Week4Test.GestioneSpese.ConsoleApp
             }
         }
 
+        internal static Dictionary<string, double> SelectTotalByCategory()
+        {
+            using SqlConnection connection = new SqlConnection(connectionString);
+            try
+            {
+                
+                connection.Open();
+
+                SqlCommand cmd = new SqlCommand("select s.CategoriaId, sum(s.Importo) from Spesa s group by s.CategoriaId", connection);
+                
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                Dictionary<string, double> result = new Dictionary<string, double>();
+
+                while (reader.Read())
+                {
+                    int id = reader.GetInt32(0);
+                    double total = (double)reader.GetDecimal(1);
+                    
+                    string categName = GetAllCategories().Where(c => c.Id == id).Select(c => c.NomeCategoria).SingleOrDefault();
+
+                    result.Add(categName, total);
+                }
+
+                connection.Close();
+                return result;
+                               
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Errore: {ex.Message}");
+                return null;
+            }
+            finally
+            {
+                if (connection.State != ConnectionState.Closed)
+                {
+                    connection.Close();
+                }
+            }
+        }
+
         internal static List<Spesa> GetAllExpenses()
         {
             DataSet expenseDS = new DataSet();

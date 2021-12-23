@@ -51,8 +51,17 @@
 
         private static void PrintTotalByCategory()
         {
-            throw new NotImplementedException();
-        }
+            //select s.CategoriaId, sum(s.Importo)
+            //from Spesa s
+            //group by s.CategoriaId
+
+            Dictionary<string, double> result = RepositoryADODisconnected.SelectTotalByCategory();
+            foreach (var item in result)
+            {
+                Console.WriteLine($"Categoria: {item.Key} - Totale: {item.Value} euro");
+            }
+
+                }
 
         private static void PrintUsersExpenses()
         {
@@ -76,7 +85,7 @@
             }
             else
                 Console.WriteLine($"\nNessuna spesa in elenco per l'utente {chosenUser}");
-            
+
         }
 
         private static void PrintApprovedExpenses()
@@ -128,7 +137,7 @@
                 int chosenId = GetInt();
                 expenseToApprove = RepositoryADODisconnected.GetAllExpenses().Where(e => e.Approvato == false).SingleOrDefault(e => e.Id == chosenId);
 
-            }while (expenseToApprove == null);
+            } while (expenseToApprove == null);
 
             bool isApproved = RepositoryADODisconnected.UpdateExpense(expenseToApprove.Id);
             //TODO aggiungi messaggio conferma
