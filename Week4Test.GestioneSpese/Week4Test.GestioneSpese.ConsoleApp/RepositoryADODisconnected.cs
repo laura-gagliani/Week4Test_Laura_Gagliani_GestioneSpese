@@ -100,6 +100,40 @@ namespace Week4Test.GestioneSpese.ConsoleApp
             }
         }
 
+        internal static bool DeleteExpense(int id)
+        {
+            DataSet expenseDS = new DataSet();
+            using SqlConnection connection = new SqlConnection(connectionString);
+            try
+            {
+                connection.Open();
+                SqlDataAdapter expenseAdapter = InitializeExpenseAdapter(connection);
+                expenseAdapter.Fill(expenseDS, "Spesa");
+                connection.Close();
+
+                DataRow rowToUpdate = expenseDS.Tables["Spesa"].Rows.Find(id);
+                if (rowToUpdate != null)
+                {
+                    rowToUpdate.Delete();
+                }
+                expenseAdapter.Update(expenseDS, "Spesa");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Errore: {ex.Message}");
+                return false;
+            }
+            finally
+            {
+                if (connection.State != ConnectionState.Closed)
+                {
+                    connection.Close();
+                }
+            }
+        }
+
         internal static bool UpdateExpense(int id)
         {
             DataSet expenseDS = new DataSet();
@@ -107,9 +141,7 @@ namespace Week4Test.GestioneSpese.ConsoleApp
             try
             {
                 connection.Open();
-                //inizializzo l'adapter
                 SqlDataAdapter expenseAdapter = InitializeExpenseAdapter(connection);
-                //faccio il Fill
                 expenseAdapter.Fill(expenseDS, "Spesa");
                 connection.Close();
 
@@ -213,6 +245,11 @@ namespace Week4Test.GestioneSpese.ConsoleApp
             //update
             a.UpdateCommand = new SqlCommand("update Spesa set Approvato = 1 where Id=@id", connection);
             a.UpdateCommand.Parameters.Add(new SqlParameter("@id", SqlDbType.Int, 0, "Id"));
+
+            //delete
+            a.DeleteCommand = new SqlCommand("delete from Spesa where Id=@id", connection);
+            a.DeleteCommand.Parameters.Add(new SqlParameter("@id", SqlDbType.Int, 0, "Id"));
+
 
             return a;
         }

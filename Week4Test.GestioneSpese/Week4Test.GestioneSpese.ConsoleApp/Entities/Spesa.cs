@@ -26,7 +26,7 @@ namespace Week4Test.GestioneSpese.ConsoleApp
             else
                 state = "Non approvato";
 
-            return $"{Id} - {Data} - {Categoria.NomeCategoria} - {Descrizione} - {Importo} - {state}";
+            return $"{Id} - {Data.ToShortDateString()} - {Categoria.NomeCategoria} - {Descrizione} - {Importo} euro - {state}";
         }
     }
 }

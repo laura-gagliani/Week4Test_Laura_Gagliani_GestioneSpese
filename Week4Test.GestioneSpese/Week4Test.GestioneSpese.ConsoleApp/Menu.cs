@@ -14,7 +14,7 @@
                 Console.WriteLine("[2] Approva una spesa esistente");
                 Console.WriteLine("[3] Cancella una spesa esistente");
                 Console.WriteLine("[4] Mostra elenco spese approvate");
-                Console.WriteLine("[5] Mostra elenco spese per utente");
+                Console.WriteLine("[5] Mostra elenco spese per un utente");
                 Console.WriteLine("[6] Mostra il totale delle spese per categoria");
                 Console.WriteLine("[0] Chiudi");
 
@@ -32,17 +32,84 @@
                         ApproveExpense();
                         break;
                     case 3:
+                        DeleteExpense();
                         break;
                     case 4:
+                        PrintApprovedExpenses();
                         break;
                     case 5:
+                        PrintUsersExpenses();
                         break;
                     case 6:
+                        PrintTotalByCategory();
                         break;
 
                 }
 
             } while (!quit);
+        }
+
+        private static void PrintTotalByCategory()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void PrintUsersExpenses()
+        {
+            Console.WriteLine("\nUtenti attualmente in elenco:");
+            List<string> users = RepositoryADODisconnected.GetAllExpenses().Select(e => e.Utente).Distinct().ToList();
+            foreach (var item in users)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine("\nInserisci il nome utente di cui vuoi visualizzare le spese:");
+            string chosenUser = Console.ReadLine();
+
+            List<Spesa> chosenUsersExpenses = RepositoryADODisconnected.GetAllExpenses().Where(e => e.Utente == chosenUser).ToList();
+            if (chosenUsersExpenses.Count != 0)
+            {
+                Console.WriteLine($"\nLe spese relative all'utente {chosenUser} sono:");
+                foreach (var item in chosenUsersExpenses)
+                {
+                    Console.WriteLine(item);
+                }
+            }
+            else
+                Console.WriteLine($"\nNessuna spesa in elenco per l'utente {chosenUser}");
+            
+        }
+
+        private static void PrintApprovedExpenses()
+        {
+            Console.WriteLine("Le spese approvate sono:");
+
+            List<Spesa> approvedExpenses = RepositoryADODisconnected.GetAllExpenses().Where(e => e.Approvato == true).ToList();
+            foreach (var item in approvedExpenses)
+            {
+                Console.WriteLine(item);
+            }
+        }
+
+        private static void DeleteExpense()
+        {
+            Console.WriteLine("Le spese presenti sono:");
+
+            List<Spesa> allExpenses = RepositoryADODisconnected.GetAllExpenses().ToList();
+            foreach (var item in allExpenses)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine("Inserisci l'ID della spesa da cancellare:");
+            Spesa expenseToDelete = null;
+            do
+            {
+                int chosenId = GetInt();
+                expenseToDelete = RepositoryADODisconnected.GetAllExpenses().SingleOrDefault(e => e.Id == chosenId);
+
+            } while (expenseToDelete == null);
+
+            bool isDeleted = RepositoryADODisconnected.DeleteExpense(expenseToDelete.Id);
+            //TODO aggiungi messaggio conferma
         }
 
         private static void ApproveExpense()
@@ -59,7 +126,7 @@
             do
             {
                 int chosenId = GetInt();
-                expenseToApprove = RepositoryADODisconnected.GetAllExpenses().SingleOrDefault(e => e.Id == chosenId);
+                expenseToApprove = RepositoryADODisconnected.GetAllExpenses().Where(e => e.Approvato == false).SingleOrDefault(e => e.Id == chosenId);
 
             }while (expenseToApprove == null);
 
